@@ -1,35 +1,80 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
+var express      = require('express'),
+    app          = express(),
+    bodyParser   = require('body-parser'),
+    mongoose     = require('mongoose');
+
+mongoose.connect("mongodb://localhost:27017/yelpcamp", {useNewUrlParser: true});
+
+var campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String,
+    desc: String
+});
+
+var Campground = mongoose.model("Campground", campgroundSchema);
+// Campground.create({
+//     name: "Algonquin",
+//     image: "https://upload.wikimedia.org/wikipedia/commons/3/33/ON_-_Algonquin_Provincial_Park.jpg",
+//     desc: "A national tresure"
+// }, function(err, camp){
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log(camp);
+//     }
+// });
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-var campgrounds = 
-[
-    {name: 'muskoka', image: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Lake_Muskoka.jpg'},
-    {name: 'simcoe', image: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Lake_Simcoe.JPG'},
-    {name: 'algonquin', image: 'https://upload.wikimedia.org/wikipedia/commons/3/33/ON_-_Algonquin_Provincial_Park.jpg'},
-];
-
 app.get('/', function(req, res){
     res.render("landing");
 });
 
+//INDEX
 app.get('/campgrounds', function(req, res){
-    res.render("campgrounds", {camps: campgrounds});
+    Campground.find({}, function (err, campgrounds){
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("index", {campgrounds: campgrounds});
+        }
+    });
 });
 
+//NEW
 app.get('/campgrounds/new', function(req, res){
     res.render("new");
 })
 
+//SHOW
+app.get('/campgrounds/:id', function(req, res){
+    Campground.findById(req.params.id, function(err, campground){
+        if (err) {
+            console.log(err)
+        } else {
+            res.render('show', {campground: campground});
+        }
+    });
+});
+
+//CREATE
 app.post('/campgrounds', function(req, res){
     var name = req.body.name;
     var image = req.body.image;
-    campgrounds.push({name: name, image: image});
-    res.redirect('/campgrounds');
+    var desc = req.body.description;
+    Campground.create({
+        name: name,
+        image: image,
+        desc: desc
+    }, function(err, campground){
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect('/campgrounds');
+        }
+    });
 });
 
 app.listen(3000, function(){
