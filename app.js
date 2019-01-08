@@ -16,7 +16,7 @@ const commentRoutes = require('./routes/comments'),
 var app = express();
 
 // mongoose config and seeding
-mongoose.connect(`mongodb://${process.env.MLAB_NAME}:${process.env.MLAB_PASS}@ds151614.mlab.com:51614/yelpcamp-wdb`, { useNewUrlParser: true });
+mongoose.connect("mongodb://localhost:27017/yelpcamp", { useNewUrlParser: true });
 mongoose.set('useFindAndModify', false);
 // seedDB();
 
@@ -53,6 +53,6 @@ app.use('/', indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
 app.use('/campgrounds/:id/comments', commentRoutes);
 
-app.listen(process.env.PORT, function () {
+app.listen(3000, function () {
     console.log('YelpCamp started on port 3000');
 });
