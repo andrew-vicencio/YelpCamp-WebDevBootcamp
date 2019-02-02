@@ -21,7 +21,7 @@ npm start
 
 ## Todo
 
-- [ ] Use proper promises, as well as async/await
+- [x] Use proper promises, as well as async/await
 - [ ] Turn into ReactApp or Ang
 - [ ] Style login and sign up pages
 - [ ] Few UI Tweaks (Adding google maps, proper footer, time since posting, etc)
